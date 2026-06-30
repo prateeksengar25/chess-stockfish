@@ -23,7 +23,11 @@ export function SkillSelector({ value, onChange }: SkillSelectorProps) {
         {SKILL_PRESETS.map((preset) => (
           <option key={preset.id} value={preset.id}>
             {preset.label}
-            {preset.limitStrength ? ` (~${preset.elo})` : ''}
+            {preset.id === 'beginner'
+              ? ' (learning)'
+              : preset.limitStrength
+                ? ` (~${preset.elo})`
+                : ''}
           </option>
         ))}
       </select>

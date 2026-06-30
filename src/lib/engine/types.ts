@@ -26,4 +26,6 @@ export type AnalyzeOptions = {
   multiPv?: number;
   limitStrength?: boolean;
   elo?: number;
+  skillLevel?: number;
+  movetimeMs?: number;
 };

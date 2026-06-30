@@ -98,14 +98,23 @@ export class StockfishManager {
       if (options.limitStrength) {
         this.send('setoption name UCI_LimitStrength value true');
         this.send(
-          'setoption name UCI_Elo value ' + (options.elo ?? 1200),
+          'setoption name UCI_Elo value ' + Math.max(1320, options.elo ?? 1320),
         );
       } else {
         this.send('setoption name UCI_LimitStrength value false');
       }
 
+      if (options.skillLevel !== undefined) {
+        this.send('setoption name Skill Level value ' + options.skillLevel);
+      }
+
       this.send('position fen ' + options.fen);
-      this.send('go depth ' + options.depth);
+
+      if (options.movetimeMs) {
+        this.send('go movetime ' + options.movetimeMs);
+      } else {
+        this.send('go depth ' + options.depth);
+      }
     });
   }
 

@@ -4,6 +4,7 @@ import {
   getSkillPreset,
   type SkillPresetId,
 } from '../lib/analysis/skillPresets';
+import { pickSuggestionLines } from '../lib/analysis/suggestionFilter';
 import { buildMoveHint, type MoveHint } from '../lib/analysis/moveHints';
 import { uciToSan } from '../lib/chess/moveUtils';
 import { stockfishManager } from '../lib/engine/stockfishManager';
@@ -14,8 +15,8 @@ import {
 } from '../lib/engine/uciParser';
 
 const EVAL_DEPTH = 16;
-const SUGGEST_DEPTH = 14;
 const SUGGEST_MULTI_PV = 5;
+const SUGGEST_MULTI_PV_SEARCH = 8;
 const ANALYSIS_DEBOUNCE_MS = 180;
 
 export type AnalysisStatus = 'idle' | 'loading' | 'ready' | 'error';
@@ -74,19 +75,32 @@ export function useEngineAnalysis(fen: string, skillPresetId: SkillPresetId) {
           setEvalLabel(formatScore(topEvalLine.score, sideToMove));
         }
 
+        const fullStrengthBestUci =
+          topEvalLine?.moveUci ?? evalResult.bestMoveUci ?? null;
+
         const suggestResult = await stockfishManager.analyze({
           fen,
-          depth: SUGGEST_DEPTH,
-          multiPv: SUGGEST_MULTI_PV,
+          depth: skillPreset.suggestDepth,
+          multiPv: skillPreset.hideEngineBest
+            ? SUGGEST_MULTI_PV_SEARCH
+            : SUGGEST_MULTI_PV,
           limitStrength: skillPreset.limitStrength,
           elo: skillPreset.elo,
+          skillLevel: skillPreset.skillLevel,
+          movetimeMs: skillPreset.movetimeMs,
         });
 
         if (cancelled || currentRequest !== requestId) {
           return;
         }
 
-        setSuggestions(suggestResult.lines.slice(0, SUGGEST_MULTI_PV));
+        setSuggestions(
+          pickSuggestionLines(
+            suggestResult.lines,
+            fullStrengthBestUci,
+            skillPreset.hideEngineBest,
+          ),
+        );
         setStatus('ready');
       } catch (error) {
         if (cancelled || currentRequest !== requestId) {

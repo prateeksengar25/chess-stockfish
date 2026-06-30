@@ -10,15 +10,65 @@ export type SkillPreset = {
   label: string;
   elo: number;
   limitStrength: boolean;
+  /** Stockfish Skill Level 0–20; strongest when UCI_LimitStrength is off. */
+  skillLevel: number;
+  /** Search depth for move suggestions at this level. */
+  suggestDepth: number;
+  /** Optional movetime cap (ms) to keep low levels from searching too deep. */
+  movetimeMs?: number;
+  /** Hide the full-strength best move from suggestions (teaching mode). */
+  hideEngineBest: boolean;
 };
 
-/** User-facing skill levels mapped to Stockfish UCI_Elo settings. */
+/** User-facing skill levels mapped to Stockfish weakness settings. */
 export const SKILL_PRESETS: SkillPreset[] = [
-  { id: 'beginner', label: 'Beginner', elo: 1200, limitStrength: true },
-  { id: 'casual', label: 'Casual', elo: 1500, limitStrength: true },
-  { id: 'intermediate', label: 'Intermediate', elo: 1800, limitStrength: true },
-  { id: 'advanced', label: 'Advanced', elo: 2200, limitStrength: true },
-  { id: 'full', label: 'Full engine', elo: 0, limitStrength: false },
+  {
+    id: 'beginner',
+    label: 'Beginner',
+    elo: 1320,
+    limitStrength: false,
+    skillLevel: 2,
+    suggestDepth: 6,
+    movetimeMs: 350,
+    hideEngineBest: true,
+  },
+  {
+    id: 'casual',
+    label: 'Casual',
+    elo: 1400,
+    limitStrength: true,
+    skillLevel: 8,
+    suggestDepth: 8,
+    movetimeMs: 500,
+    hideEngineBest: false,
+  },
+  {
+    id: 'intermediate',
+    label: 'Intermediate',
+    elo: 1700,
+    limitStrength: true,
+    skillLevel: 12,
+    suggestDepth: 10,
+    hideEngineBest: false,
+  },
+  {
+    id: 'advanced',
+    label: 'Advanced',
+    elo: 2100,
+    limitStrength: true,
+    skillLevel: 16,
+    suggestDepth: 12,
+    hideEngineBest: false,
+  },
+  {
+    id: 'full',
+    label: 'Full engine',
+    elo: 0,
+    limitStrength: false,
+    skillLevel: 20,
+    suggestDepth: 14,
+    hideEngineBest: false,
+  },
 ];
 
 export const DEFAULT_SKILL_PRESET_ID: SkillPresetId = 'beginner';
