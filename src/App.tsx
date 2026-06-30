@@ -67,6 +67,13 @@ function App() {
           isLoading={isLoading}
         />
 
+        <Controls
+          canUndo={canUndo}
+          onUndo={undoMove}
+          onReset={resetGame}
+          onFlip={flipBoard}
+        />
+
         <ChessBoardPanel
           fen={fen}
           boardOrientation={boardOrientation}
@@ -81,12 +88,6 @@ function App() {
         ) : null}
 
         <ArrowLegend suggestions={suggestionDisplay} isLoading={isLoading} />
-        <Controls
-          canUndo={canUndo}
-          onUndo={undoMove}
-          onReset={resetGame}
-          onFlip={flipBoard}
-        />
       </main>
     </div>
   );
