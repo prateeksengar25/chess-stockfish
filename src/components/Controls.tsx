@@ -1,5 +1,6 @@
 type ControlsProps = {
   canUndo: boolean;
+  undoStepsRemaining: number;
   onUndo: () => void;
   onReset: () => void;
   onFlip: () => void;
@@ -8,7 +9,13 @@ type ControlsProps = {
 /**
  * Primary board controls for undo, reset, and orientation flip.
  */
-export function Controls({ canUndo, onUndo, onReset, onFlip }: ControlsProps) {
+export function Controls({
+  canUndo,
+  undoStepsRemaining,
+  onUndo,
+  onReset,
+  onFlip,
+}: ControlsProps) {
   return (
     <div className="controls">
       <button
@@ -17,7 +24,7 @@ export function Controls({ canUndo, onUndo, onReset, onFlip }: ControlsProps) {
         onClick={onUndo}
         disabled={!canUndo}
       >
-        Undo
+        Undo{undoStepsRemaining > 0 ? ` (${undoStepsRemaining})` : ''}
       </button>
       <button type="button" className="controls__button" onClick={onReset}>
         New game

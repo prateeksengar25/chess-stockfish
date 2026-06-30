@@ -29,6 +29,7 @@ function App() {
     undoMove,
     flipBoard,
     canUndo,
+    undoStepsRemaining,
   } = useChessGame();
 
   const {
@@ -69,6 +70,7 @@ function App() {
 
         <Controls
           canUndo={canUndo}
+          undoStepsRemaining={undoStepsRemaining}
           onUndo={undoMove}
           onReset={resetGame}
           onFlip={flipBoard}
