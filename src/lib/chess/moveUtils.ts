@@ -1,6 +1,26 @@
 import { Chess } from 'chess.js';
 
 /**
+ * Applies a UCI move to a game instance, defaulting pawn promotions to queen.
+ */
+export function applyUciMove(game: Chess, moveUci: string) {
+  if (!moveUci || moveUci.length < 4) {
+    return null;
+  }
+
+  try {
+    return game.move({
+      from: moveUci.slice(0, 2),
+      to: moveUci.slice(2, 4),
+      promotion:
+        moveUci.length > 4 ? (moveUci[4] as 'q' | 'r' | 'b' | 'n') : undefined,
+    });
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Attempts a move on the given game instance, defaulting pawn promotions to queen.
  */
 export function tryMove(game: Chess, from: string, to: string): boolean {
@@ -31,14 +51,6 @@ export function uciToSan(fen: string, moveUci: string): string {
   }
 
   const temp = new Chess(fen);
-  try {
-    const move = temp.move({
-      from: moveUci.slice(0, 2),
-      to: moveUci.slice(2, 4),
-      promotion: moveUci.length > 4 ? (moveUci[4] as 'q') : undefined,
-    });
-    return move?.san ?? moveUci;
-  } catch {
-    return moveUci;
-  }
+  const move = applyUciMove(temp, moveUci);
+  return move?.san ?? moveUci;
 }

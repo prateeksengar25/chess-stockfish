@@ -4,6 +4,7 @@ import {
   getSkillPreset,
   type SkillPresetId,
 } from '../lib/analysis/skillPresets';
+import { buildMoveHint, type MoveHint } from '../lib/analysis/moveHints';
 import { uciToSan } from '../lib/chess/moveUtils';
 import { stockfishManager } from '../lib/engine/stockfishManager';
 import type { EngineLine } from '../lib/engine/types';
@@ -24,6 +25,7 @@ export type SuggestionDisplay = {
   moveSan: string;
   scoreLabel: string;
   arrow: ReturnType<typeof uciToArrow>;
+  hint: MoveHint;
 };
 
 /**
@@ -112,12 +114,20 @@ export function useEngineAnalysis(fen: string, skillPresetId: SkillPresetId) {
 
   const suggestionDisplay = useMemo<SuggestionDisplay[]>(() => {
     const sideToMove = fen.split(' ')[1] === 'b' ? 'b' : 'w';
+    const bestScore = suggestions[0]?.score;
 
     return suggestions.map((line, index) => ({
       rank: index + 1,
       moveSan: uciToSan(fen, line.moveUci),
       scoreLabel: formatScore(line.score, sideToMove),
       arrow: uciToArrow(line.moveUci, ARROW_COLORS[index] ?? ARROW_COLORS[4]),
+      hint: bestScore
+        ? buildMoveHint(fen, line, index + 1, bestScore)
+        : {
+            comparison: 'Suggested line.',
+            themes: [],
+            miniPv: '',
+          },
     }));
   }, [fen, suggestions]);
 

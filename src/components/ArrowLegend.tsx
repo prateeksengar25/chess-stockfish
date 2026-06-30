@@ -7,7 +7,7 @@ type ArrowLegendProps = {
 };
 
 /**
- * Compact legend mapping arrow colors to suggested moves at the user's skill level.
+ * Compact legend mapping arrow colors to suggested moves with short hints.
  */
 export function ArrowLegend({ suggestions, isLoading }: ArrowLegendProps) {
   if (isLoading) {
@@ -31,17 +31,34 @@ export function ArrowLegend({ suggestions, isLoading }: ArrowLegendProps) {
       <h2 className="arrow-legend__title">Suggested moves</h2>
       <ul className="arrow-legend__list">
         {suggestions.map((item, index) => (
-          <li key={`${item.moveSan}-${item.rank}`} className="arrow-legend__item">
-            <span
-              className="arrow-legend__swatch"
-              style={{ backgroundColor: ARROW_COLORS[index] }}
-              aria-hidden="true"
-            />
-            <span className="arrow-legend__label">
-              {ARROW_LABELS[index] ?? `${item.rank}th`}
-            </span>
-            <span className="arrow-legend__move">{item.moveSan}</span>
-            <span className="arrow-legend__score">{item.scoreLabel}</span>
+          <li
+            key={`${item.moveSan}-${item.rank}`}
+            className="arrow-legend__card"
+          >
+            <div className="arrow-legend__item">
+              <span
+                className="arrow-legend__swatch"
+                style={{ backgroundColor: ARROW_COLORS[index] }}
+                aria-hidden="true"
+              />
+              <span className="arrow-legend__label">
+                {ARROW_LABELS[index] ?? `${item.rank}th`}
+              </span>
+              <span className="arrow-legend__move">{item.moveSan}</span>
+              <span className="arrow-legend__score">{item.scoreLabel}</span>
+            </div>
+
+            <p className="arrow-legend__comparison">{item.hint.comparison}</p>
+
+            {item.hint.themes.length > 0 ? (
+              <p className="arrow-legend__themes">
+                {item.hint.themes.join(' · ')}
+              </p>
+            ) : null}
+
+            {item.hint.miniPv ? (
+              <p className="arrow-legend__pv">Line: {item.hint.miniPv}</p>
+            ) : null}
           </li>
         ))}
       </ul>
